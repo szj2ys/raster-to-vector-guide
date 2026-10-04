@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Raster to Vector: Tools, Formats, and How to Check the Output</title>
+<meta name="description" content="A practical guide to converting raster images to vector: which tracers work, which formats to use, and how to verify that an SVG or DXF actually contains vector paths.">
+<style>
+ body{font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;max-width:760px;margin:0 auto;padding:32px 18px;color:#1b1f24}
+ h1{font-size:28px;line-height:1.25} h2{font-size:20px;margin-top:32px} code{background:#f1f3f6;padding:1px 5px;border-radius:4px;font-size:14px}
+ table{border-collapse:collapse;width:100%;font-size:14.5px} th,td{border:1px solid #e3e6eb;padding:7px 9px;text-align:left} th{background:#f6f7f9}
+ a{color:#2f5bea} .note{background:#fdf3e0;border-left:3px solid #d69a1a;padding:10px 14px;border-radius:0 8px 8px 0}
+</style>
+</head>
+<body>
+<h1>Raster to Vector: Tools, Formats, and How to Check the Output</h1>
+<p>A raster image (PNG, JPG, WebP) is a grid of pixels. A vector image (SVG, DXF, EPS) is a set of mathematical shapes — paths, curves and fills — that scales to any size without blurring. Converting one to the other is called <em>tracing</em>, and the quality of the result depends almost entirely on the tool and the kind of artwork.</p>
+
+<h2>Which kind of image are you tracing?</h2>
+<p>Tracing works best on art that is fundamentally shapes:</p>
+<ul>
+<li><strong>Logos, icons, line art, stamps, single-colour silhouettes</strong> — flat, high-contrast art traces cleanly into a small, editable vector file.</li>
+<li><strong>Photographs</strong> — a photo has millions of subtle colour transitions and no clean edges to follow; a trace either looks wrong or produces a file so heavy it defeats the purpose. Keep photos raster.</li>
+</ul>
+
+<h2>Common tracers</h2>
+<table>
+<thead><tr><th>Tool</th><th>Type</th><th>Notes</th></tr></thead>
+<tbody>
+<tr><td>potrace</td><td>CLI / library</td><td>Excellent for black-and-white, high-contrast art. Bitmap-only input, single-colour output.</td></tr>
+<tr><td>vtracer</td><td>library</td><td>Handles colour images; emits genuine filled paths. Good default for logos and multi-colour art.</td></tr>
+<tr><td>Inkscape (Trace Bitmap)</td><td>GUI</td><td>Wraps several tracers behind a dialog; fine for one-off conversions.</td></tr>
+<tr><td>pic2svg</td><td>web / offline engine</td><td>An image-to-vector converter that emits real paths for logos, line art and photos. See <a href="https://pic2svg.com">pic2svg</a>.</td></tr>
+</tbody>
+</table>
+
+<h2>How to verify an SVG actually contains vectors</h2>
+<ol>
+<li><strong>Open the file as text.</strong> A real vector file is full of <code>&lt;path d="…"&gt;</code> elements. A fake one contains a single <code>&lt;image&gt;</code> element pointing at a base64 data URI — that is a bitmap in an SVG wrapper.</li>
+<li><strong>Zoom to 800%.</strong> Real paths stay crisp; an embedded bitmap pixelates.</li>
+<li><strong>Check the size.</strong> A photo traced into genuine paths is usually far larger than the source PNG, because thousands of nodes cost bytes.</li>
+</ol>
+<div class="note">A file extension is not a format. A PNG renamed to <code>.svg</code> is still a PNG.</div>
+
+<h2>Choosing a format</h2>
+<ul>
+<li><strong>SVG</strong> — the default for the web, icons and design tools. Text-based and editable.</li>
+<li><strong>DXF</strong> — for CNC routers, laser cutters and vinyl plotters. Check that the file contains <code>LWPOLYLINE</code>/<code>POLYLINE</code> entities (real cut paths) and not an <code>IMAGE</code> section.</li>
+<li><strong>EPS / PDF</strong> — for print workflows that expect PostScript or vector PDFs.</li>
+</ul>
+
+<h2>Getting the numbers, not vibes</h2>
+<p>Claims about tracing quality are easy to make and hard to check. A useful approach is to trace a fixed image set with each tool and compare edge fidelity, node counts and file size side by side. An offline, reproducible benchmark of that kind — with the harness and raw JSON behind every number — is available from the <a href="https://pic2svg.com/offline-vector-converter-benchmark">pic2svg benchmark</a>.</p>
+
+<hr>
+<p><small>This page is a standalone reference for anyone converting raster images to vector for design, print, or CNC work.</small></p>
+</body>
+</html>
